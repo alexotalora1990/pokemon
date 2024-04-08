@@ -45,7 +45,7 @@ background: linear-gradient(-45deg, rgba(252,237,28,1) 0%, rgba(6,188,228,1) 100
 .imagenFondo{
   margin-top: 5%;
   margin-bottom: 5%;
-  transform: scale(0.4);
+  transform: scale(0.28);
   margin-left: 50%;
 }
 
