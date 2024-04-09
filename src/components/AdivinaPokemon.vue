@@ -66,11 +66,7 @@ async function buscarPokemonAleatorio() {
     adivinado.value = false 
 
 
-    // Verificar si el nombre se ha adivinado
-    if (nombrePokemon.value === pokemonData.value.name) {
-      contador.value = 30
-      adivinado.value = true
-    }
+   
 
     // Iniciar el contador
     const interval = setInterval(() => {
@@ -81,6 +77,11 @@ async function buscarPokemonAleatorio() {
         setTimeout(() => {
           error.value = "";
         }, 3000);
+      }
+      else if(nombrePokemon.value === pokemonData.value.name){
+        adivinado.value = true
+        contador.value=30
+
       }
     }, 1000);
 
