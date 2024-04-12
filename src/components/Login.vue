@@ -88,7 +88,10 @@ background: linear-gradient(-45deg, rgba(252,237,28,1) 0%, rgba(6,188,228,1) 100
 
 .button:hover {
   
-  background-color: #c4670b;
+ 
+  background-color: #888229;
+  color: #ffffff;
+
 }
 
 @media (max-width: 1000px){
