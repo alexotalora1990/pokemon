@@ -7,41 +7,35 @@
       <div class="container-2">
         <div class="nameId">
           <label>
-            Nombre del Pokémon<br>
+            <p class="parrafo">Nombre del Pokémon</p>
             <input type="text" v-model="nombrePokemon" :disabled="adivinado">
           </label>
         </div>
         <div class="contador" v-if="!adivinado">{{ contador }}</div>
+        <ul class="type" v-if="pokemonData && nombrePokemon === pokemonData.name">
+          <h3>Tipo:</h3>
+          <li v-for="(type, index) in pokemonData.types" :key="index" :class="type.type.name">
+            <span>{{ type.type.name }}</span>
+          </li>
+        </ul>
       </div>
       <div class="container-2">
-        <div class="nameImg">
-          <section v-if="pokemonData" class="card">
+        <div class="img">
+          <section v-if="pokemonData"  class="imagen-1">
             <h2 class="namePokemon" v-if="nombrePokemon === pokemonData.name">{{ pokemonData.name }}</h2>
             <p>Numero: {{ pokemonData.id }}</p>
             <p>Peso: {{ pokemonData.weight }}</p>
-            <div class="imagen">
-              <img :src="pokemonData.sprites?.front_shiny" :alt="pokemonData.name"
+            <div class="imagen-2">
+              <img :src="pokemonData.sprites.other?.['official-artwork']?.front_default" :alt="pokemonData.name"
                    :class="{ 'pokemonImage': 1, 'coloredImage': (nombrePokemon === pokemonData.name) }">
             </div>
           </section>
         </div>
       </div>
-      <h4 id="alerta" v-if="error != ''">{{ error }}</h4>
+      <div class="alert">
+        <h5 :class="{ 'error': error === '¡Perdiste!', 'success': error === '¡Ganaste!' }" v-if="error !== ''">{{ error }}</h5>
+      </div>
     </div>
-    <ul class="type" v-if="pokemonData && nombrePokemon === pokemonData.name">
-      <h3>Tipo:</h3>
-      <li v-for="(type, index) in pokemonData.types" :key="index" :class="type.type.name">
-        <span>{{ type.type.name }}</span>
-      </li>
-    </ul>
-    <ul class="stat" v-if="pokemonData && nombrePokemon === pokemonData.name">
-      <h3>Estadisticas:</h3>
-      <li v-for="(stat, index) in pokemonData.stats" :key="index">
-        <span>{{ stat.stat.name }}:</span>
-        <progress :value="stat.base_stat" max="255"></progress>
-        <span>{{ stat.base_stat }}</span>
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -54,22 +48,24 @@ let nombrePokemon = ref("")
 let error = ref("")
 let contador = ref(0)
 let adivinado = ref(false)
+let interval = null
 
 async function buscarPokemonAleatorio() {
   try {
+    
+    if (interval) clearInterval(interval);
+
     const idAleatorio = Math.floor(Math.random() * 1024) + 1;
     const resultado = await axios.get(`https://pokeapi.co/api/v2/pokemon/${idAleatorio}`)
     pokemonData.value = resultado.data
-    console.log(resultado.data)
+    console.log(pokemonData.value.name)
     nombrePokemon.value = ""
     contador.value = 30
-    adivinado.value = false 
+    adivinado.value = false
+    error.value = ""
 
 
-   
-
-    // Iniciar el contador
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       contador.value--;
       if (contador.value === 0) {
         clearInterval(interval);
@@ -77,11 +73,13 @@ async function buscarPokemonAleatorio() {
         setTimeout(() => {
           error.value = "";
         }, 3000);
-      }
-      else if(nombrePokemon.value === pokemonData.value.name){
-        adivinado.value = true
-        contador.value=30
-
+      } else if (nombrePokemon.value === pokemonData.value.name) {
+        adivinado.value = true;
+        clearInterval(interval);
+        error.value = "¡Ganaste!";
+        setTimeout(() => {
+          error.value = "";
+        }, 3000);
       }
     }, 1000);
 
@@ -92,14 +90,48 @@ async function buscarPokemonAleatorio() {
 }
 </script>
 
+
+
+
 <style scoped>
+
+.alert {
+  text-align: center;
+  width: 36%;
+  box-shadow: 7px 7px 14px #807c7c,
+    -7px -7px 14px #807c7c;
+  z-index: 1200;
+  margin-left: 28%;
+  position: fixed;
+  border-radius: 10px;
+}
+
+h5 {
+ font-size: 300%;
+  height: 100px;
+  padding: 2%;
+  padding-top: 5%;
+  text-align: center;
+  
+  /* background-color: red; */
+  color: #ffffff;
+  
+}
+.error {
+
+  background-color: red;
+}
+
+.success {
+  background-color: green;
+}
 .container-1 {
-  display: flex;
-  height: 100%;
+  display: grid;
+  grid-template-columns: 40% 60%;
 }
 
 .container-2 {
-  flex: 1;
+   flex: 1;
   text-align: center;
 }
 
@@ -113,6 +145,7 @@ async function buscarPokemonAleatorio() {
 
 .nameId {
   margin-bottom: 2%;
+ 
 }
 
 .contador {
@@ -122,4 +155,51 @@ async function buscarPokemonAleatorio() {
   border-radius: 10px 0;
   margin-left: 40%;
 }
+input{
+  width: 50%;
+}
+button{
+  font-size: 200%;
+}
+.img{
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 1%;
+  text-align: left;
+  width: 90%;
+ }
+
+.parrafo{
+  padding-top:25%;
+}
+.imagen-1 p{
+font-size: 180%;
+padding-left: 5%;
+}
+.imagen-2 {
+  text-align: center;
+  height: auto;
+  display: block;
+  transform: scale(1);
+  margin-bottom: 0%;
+  padding-left: 0%;
+  
+}
+
+@media (max-width: 1000px){
+  .imagen-2 {
+  transform: scale(.7);  
+  }
+}
+
+@media (max-width: 700px){
+  .imagen-2 {
+  transform: scale(.6);  
+  }
+  .contador {
+  font-size: 200%;
+  
+}
+}
+
 </style>

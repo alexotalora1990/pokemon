@@ -1,32 +1,36 @@
 <template>
   <div>
-    
-        <div class="nameId">
-          <h4 id="alerta" v-if="error != ''">{{ error }}</h4>
+
+    <div class="nameId">
+      <h4 id="alerta" v-if="error != ''">{{ error }}</h4>
       <label>
-        Nombre de pokemon o id:
+        <p class="parrafo">Nombre de pokemon o id:</p>
         <input type="text" v-model="idPokemon">
         <button @click="validar()">Buscar Pokemon</button>
       </label>
-      
     </div>
-    <div class="nameImg">
-      <section v-if="pokemonData" class="card">
-        <h2 class="namePokemon">{{ pokemonData.name }}</h2>
-        <p>Numero: {{ pokemonData.id }}</p>
-        <p>Peso: {{ pokemonData.weight }}</p>
-<div class="imagen">
-  <img :src="pokemonData.sprites?.front_shiny" :alt="pokemonData.name">
-</div>
-        
-      </section>
+    <div class="container">
+      <div class="container1">
+        <section v-if="pokemonData" class="card">
+          <h2 class="namePokemon">{{ pokemonData.name }}</h2>
+          <p>Numero: {{ pokemonData.id }}</p>
+          <p>Peso: {{ pokemonData.weight }}</p>
+
+          <ul class="type" v-if="pokemonData">
+            <h3>Tipo:</h3>
+            <li v-for="(type, index) in pokemonData.types" :key="index" :class="type.type.name">
+              <span>{{ type.type.name }}</span>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <div class="imagen">
+        <img v-if="pokemonData && pokemonData.sprites"
+          :src="pokemonData.sprites.other?.['official-artwork']?.front_default" :alt="pokemonData.name">
+      </div>
     </div>
-    <ul class="type" v-if="pokemonData">
-      <h3>Tipo:</h3>
-      <li v-for="(type, index) in pokemonData.types" :key="index" :class="type.type.name">
-        <span>{{ type.type.name }}</span>
-      </li>
-    </ul>
+
+
     <ul class="stat" v-if="pokemonData">
       <h3>Estadisticas:</h3>
       <li v-for="(stat, index) in pokemonData.stats" :key="index">
@@ -55,6 +59,7 @@ function validar() {
 
   else {
     traer()
+    idPokemon.value=""
   }
 }
 
@@ -63,7 +68,7 @@ async function traer() {
     const resultado = await axios.get(`https://pokeapi.co/api/v2/pokemon/${idPokemon.value}`)
     pokemonData.value = resultado.data
     console.log(resultado.data)
-    console.log(pokemonData.value.stats)
+    console.log(pokemonData.value.name)
   } catch (error) {
     console.log(error)
   }
@@ -121,46 +126,62 @@ button {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
-  background-color:  #eca013 ;
-  /* Verde */
-  color: black;
+  background-color: #fced1c;
+   color: black;
   cursor: pointer;
-  font-size: 120%;
+ 
+}
+
+.container {
+  display: flex;
+  height: 100%;
+  padding-top: 5%;
+}
+
+.container1 {
+  display: 1;
+  text-align: center;
+  padding-left: 10%;
+
+}
+
+.container1 section p {
+  font-size: 200%;
+  text-align: left;
+  margin-top: 5%;
 
 }
 
 /* Estilos para la tarjeta de Pokemon */
 .card {
-  
+width: 140%;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 15%;
+  margin-top: 3%;
 }
 
-.card p {
-  font-size: 120%;
-  text-align: right;
-  margin-right: 5%;
-}
+
 
 .namePokemon {
-  color: #333;
+  color: #000000;
   /* Negro */
   text-align: center;
-  font-size: 200%;
+  font-size: 500%;
 }
 
 .imagen {
-  max-width: 100%;
   text-align: center;
   height: auto;
   display: block;
   margin: 0 auto;
-  transform: scale(2);
+  transform: scale(1);
   margin-bottom: 3%;
+  padding-left: 10%;
   
+
 }
+
 
 /* Estilos para las listas de tipo y estadísticas */
 .type,
@@ -181,21 +202,50 @@ button {
   margin-bottom: 1%;
 }
 
-.type li span,
+.li span,
 .stat li span {
   margin-right: 10px;
+  font-size: 200%;
   padding: 5px 10px;
   border-radius: 4px;
-  background-color: #f17d11;
-  color: white;
+  background-color: #fced1c;
+
+}
+
+.type{
+  font-size: 200%;
+text-align: center;
+  border-radius: 4px;
+  background-color: #fced1c;
 }
 
 progress {
   width: 100%;
   height: 30px;
   margin: 1% 3%;
-  background-color: #4CAF50; 
-  border-radius: 10px; 
+  background-color: #fced1c;
+  border-radius: 10px;
 
+}
+
+.parrafo {
+  font-size: 180%;
+}
+
+button:hover {
+  background-color: #888229;
+  color: #ffffff;
+}
+
+@media (max-width: 1000px){
+  .imagen {
+  transform: scale(.8);  
+  }
+  .h3{
+  font-size: 100%;
+}
+.namePokemon {
+  font-size: 350%;
+}
 }
 </style>

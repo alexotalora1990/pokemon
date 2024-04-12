@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img class="imagenFondo" src="../imagenes/poke1.png">  
+    <img class="imagenFondo" :src="imagenActual">  
     <div class="Fondo">  
        
       <div class="buttons-container">
@@ -12,9 +12,12 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
+const imagenActual = ref('');
 
 const irABuscarPokemon = () => {
   router.push('/BuscarPokemon');
@@ -22,6 +25,21 @@ const irABuscarPokemon = () => {
 
 const irAPlayPokemon = () => {
   router.push('/AdivinaPokemon');
+}
+
+onMounted(() => {
+  setInterval(cambiarImagen, 3000); // Cambia la imagen cada 3 segundos
+});
+
+async function cambiarImagen() {
+  try {
+    const idAleatorio = Math.floor(Math.random() * 1024) + 1;
+    const resultado = await axios.get(`https://pokeapi.co/api/v2/pokemon/${idAleatorio}`);
+    const pokemonData = resultado.data;
+    imagenActual.value = pokemonData.sprites.other['official-artwork'].front_default;
+  } catch (error) {
+    console.log(error);
+  }
 }
 </script>
 
@@ -37,15 +55,11 @@ background: linear-gradient(-45deg, rgba(252,237,28,1) 0%, rgba(6,188,228,1) 100
   height: 100vh;
 }
 
-.Fondo {
-  border: solid 2px black;
- border-radius: 50%;
- width: 100px;
-}
+
 .imagenFondo{
   margin-top: 5%;
   margin-bottom: 5%;
-  transform: scale(0.28);
+  transform: scale(1);
   margin-left: 50%;
 }
 
@@ -62,10 +76,10 @@ background: linear-gradient(-45deg, rgba(252,237,28,1) 0%, rgba(6,188,228,1) 100
 }
 
 .button {
-  font-size: 24px;
+  font-size: 300%;
   padding: 10px 20px;
   margin: 10px;
-  background-color: #f17d11;
+  background-color: #fced1c;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -76,4 +90,14 @@ background: linear-gradient(-45deg, rgba(252,237,28,1) 0%, rgba(6,188,228,1) 100
   
   background-color: #c4670b;
 }
+
+@media (max-width: 1000px){
+  .imagenFondo {
+  transform: scale(.7);  
+  }
+  .button {
+  font-size: 200%;
+  }
+}
+
 </style>
