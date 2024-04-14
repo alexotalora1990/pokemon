@@ -9,7 +9,8 @@ import '@quasar/extras/material-icons/material-icons.css'
 
 // Import Quasar css
 import 'quasar/src/css/index.sass'
-
+const pinia =createPinia()
+pinia.use(piniaPluginPersistedstate)
 const myApp = createApp(App)
 
 myApp.use(Quasar, {
